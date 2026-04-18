@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Un regalo especial para ti 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:    #C94F7C;
+      --rose-lt: #F7D6E5;
+      --rose-dk: #8A2F52;
+      --cream:   #FDF6F0;
+      --ink:     #2A1A22;
+      --muted:   #9A7A88;
+      --border:  #EDD5E2;
+      --red1:    #C0394B;
+      --red2:    #E8607A;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #B03050;
+      background-image:
+        radial-gradient(ellipse at 15% 15%, #D94060 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, #8A1F35 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 100%, #C03050 0%, transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    .petals { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+    .petal {
+      position: absolute;
+      background: rgba(255,210,220,0.4);
+      border-radius: 50% 0 50% 0;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0.5; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ── LOCK SCREEN ── */
+    #lock-screen {
+      position: relative; z-index: 10;
+      background: rgba(255,255,255,0.97);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 3rem 2.5rem;
+      width: min(460px, 95vw);
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(100,0,20,0.35), 0 4px 16px rgba(0,0,0,0.15);
+      animation: slideUp .5s cubic-bezier(.16,1,.3,1) both;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .lock-icon {
+      width: 76px; height: 76px;
+      background: linear-gradient(135deg, #F7D6E5, #FBEAF0);
+      border-radius: 50%;
+      margin: 0 auto 1.4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 16px rgba(201,79,124,.2);
+    }
+
+    #lock-screen h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--ink);
+      margin-bottom: .4rem;
+    }
+
+    #lock-screen p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .pin-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.5rem; }
+    .pin-row input {
+      width: 48px; height: 56px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 22px; font-weight: 500;
+      text-align: center;
+      color: var(--red1);
+      background: var(--cream);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .pin-row input:focus {
+      border-color: var(--red1);
+      box-shadow: 0 0 0 3px rgba(192,57,75,.15);
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--red2), var(--red1));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 13px 38px;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      letter-spacing: .03em;
+      font-family: 'DM Sans', sans-serif;
+      box-shadow: 0 4px 14px rgba(192,57,75,.4);
+    }
+    .btn:hover  { opacity: .88; }
+    .btn:active { transform: scale(.97); }
+
+    .error { margin-top: .8rem; font-size: 13px; color: var(--red1); min-height: 18px; }
+
+    .shake { animation: shake .35s ease; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-8px); }
+      75%      { transform: translateX(8px); }
+    }
+
+    /* ── LETTER SCREEN ── */
+    #letter-screen {
+      display: none;
+      position: relative; z-index: 10;
+      width: min(860px, 97vw);
+      animation: openEnvelope .7s cubic-bezier(.16,1,.3,1) both;
+    }
+    @keyframes openEnvelope {
+      from { opacity: 0; transform: scale(.9) translateY(20px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0); }
+    }
+
+    .envelope-flap {
+      width: 100%;
+      height: 42px;
+      background: linear-gradient(135deg, #F7D6E5, #FBEAF0);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 20px 20px 0 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      gap: 10px;
+    }
+    .envelope-flap span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--rose-dk);
+      font-weight: 500;
+      letter-spacing: .05em;
+    }
+
+    .letter-paper {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 0 0 24px 24px;
+      padding: 3.5rem 5rem 4rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(100,0,20,0.3);
+    }
+
+    .letter-paper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: repeating-linear-gradient(90deg, var(--red1) 0, var(--red1) 8px, transparent 8px, transparent 16px);
+      opacity: .3;
+    }
+
+    .letter-lines {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: repeating-linear-gradient(transparent, transparent 33px, #F5E0E8 33px, #F5E0E8 34px);
+      background-position: 0 60px;
+      opacity: .35;
+    }
+
+    .letter-date {
+      font-size: 12px; color: var(--muted);
+      text-align: right; margin-bottom: 1.8rem; position: relative;
+    }
+
+    .letter-greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px; color: var(--red1);
+      margin-bottom: 1.4rem; position: relative;
+    }
+
+    .letter-body {
+      font-size: 16px; color: var(--ink);
+      line-height: 2.1;
+      white-space: pre-wrap;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      margin-bottom: 3rem; position: relative;
+    }
+
+    .letter-closing {
+      text-align: right;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; color: var(--ink);
+      line-height: 1.9; position: relative;
+    }
+    .letter-closing strong {
+      font-size: 20px; color: var(--red1); display: block;
+    }
+
+    .hearts-deco {
+      text-align: center; margin-top: 2rem;
+      font-size: 20px; letter-spacing: 10px;
+      opacity: .6; position: relative;
+    }
+
+    /* Decoración lateral */
+    .letter-paper::after {
+      content: '♥';
+      position: absolute;
+      left: 1.6rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px; color: var(--border);
+      writing-mode: vertical-rl;
+      letter-spacing: 18px;
+      opacity: .8;
+    }
+
+    .heart-burst { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+    .hb {
+      position: absolute;
+      animation: burstUp 2.8s ease forwards;
+      opacity: 0;
+    }
+    @keyframes burstUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      80%  { opacity: .6; transform: translateY(-260px) scale(.8); }
+      100% { opacity: 0; transform: translateY(-300px) scale(.5); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="petals" id="petals"></div>
+
+<div id="lock-screen">
+  <div class="lock-icon">🔒</div>
+  <h1>Tú regalito te esperaaaa</h1>
+  <p>YO hice esto para ti<br>Ingresa el codigo cofa</p>
+
+  <div class="pin-row" id="pin-row">
+    <input type="password" maxlength="1" id="p0" autocomplete="off"/>
+    <input type="password" maxlength="1" id="p1" autocomplete="off"/>
+    <input type="password" maxlength="1" id="p2" autocomplete="off"/>
+    <input type="password" maxlength="1" id="p3" autocomplete="off"/>
+    <input type="password" maxlength="1" id="p4" autocomplete="off"/>
+    <input type="password" maxlength="1" id="p5" autocomplete="off"/>
+  </div>
+
+  <button class="btn" onclick="checkPass()">Abrir carta 💗</button>
+  <div class="error" id="error-msg"></div>
+</div>
+
+<div id="letter-screen">
+  <div class="envelope-flap">💗 <span>te amooo mucho mucho</span> 💗</div>
+  <div class="letter-paper">
+    <div class="letter-lines"></div>
+    <div class="letter-date" id="letter-date"></div>
+    <div class="letter-greeting">Mi amor,</div>
+    <div class="letter-body" id="letter-body"></div>
+    <div class="letter-closing">
+      Con todo mi amor,<br>
+      <strong id="letter-from"></strong>
+    </div>
+    <div class="hearts-deco">♥ ♡ ♥ ♡ ♥</div>
+  </div>
+</div>
+
+<div class="heart-burst" id="heart-burst"></div>
+
+<script>
+  const PASSWORD = "211225";
+  const LETTER   = `Hola mi amor, ya se hacer cartas JHAJSHAJS ps 
+  no sabes cuanto te amo mi amor te amo demasiado no sabes lo feliz q me haces en estos 3 meses
+  pucha amor me siento muy bien contigo, se q aveces no estamos tan bien 
+  pero igual lo arreglaomos, disculpame por la forma q avces me comporto amor
+  solo q soy berrinchuda me gusta q todo se haga a mi manera,
+  se q eso esta mal JHASHJAS pero bueno.
+  El regalo en si no es por nada especial solo q
+  no te hago regalos hace tiempo osea si pero por dias importantes.
+
+  No sabes lo lindo q es tener a alguien como tú en mi vida, por q me sacas una sonrisa
+  aún estando lejos de mi. Adoro pasar tiempo contigo incluso si es por el celular
+  te convertiste en mi parte favorita del día, estar en llamada contigo es lo mejor 
+  no sabes cuanto me alegra cada vez q te puedo escuchar aunq yo no pueda hablar JHAJSHJAHS
+  y lo siento por eso, si no pasa algo pasa otra cosa pipipi
+
+  Pero bueno no mas quiero decirte q te amo demasiado, te amo muchisimo no me dejes porfa
+  como dijo la novia de mi amigo, me voy a matar si me dejas JHAJSHJAHSJAHS 
+  Pero en si te amo muchooooooo, demasidooooo te adoro mi niño, no sabes lo orgullosa q estoy de ti
+  de todo lo q haces, te amo demasiado, simpre te voy a apoyar en lo q hagas amor, simpre me vas a tener a mi 
+  no estas solo, se q no estoy ahi presente pero, trato de estarlo a la distancia mi vida, te amo muchooo
+  MUAAAAAAAAAAAAAAAA 💗
+
+
+Te amare hoy, mañana y siempre.`;
+  const FROM = "Angie💕";
+
+  // Pétalos
+  const petalContainer = document.getElementById('petals');
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.cssText = `
+      left: ${Math.random()*100}%;
+      animation-duration: ${6 + Math.random()*8}s;
+      animation-delay: ${Math.random()*10}s;
+      width: ${8 + Math.random()*8}px;
+      height: ${10 + Math.random()*10}px;
+      opacity: ${0.2 + Math.random()*0.35};
+    `;
+    petalContainer.appendChild(p);
+  }
+
+  // Inputs PIN — foco automático corregido
+  const inputs = Array.from({length: 6}, (_, i) => document.getElementById('p' + i));
+
+  inputs.forEach((inp, i) => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (inp.value) {
+          inp.value = '';
+        } else if (i > 0) {
+          inputs[i - 1].value = '';
+          inputs[i - 1].focus();
+        }
+      }
+      if (e.key === 'Enter') checkPass();
+    });
+    inp.addEventListener('input', () => {
+      const val = inp.value.slice(-1);
+      inp.value = val;
+      if (val && i < 5) inputs[i + 1].focus();
+    });
+    inp.addEventListener('click', () => inp.select());
+  });
+
+  inputs[0].focus();
+
+  function checkPass() {
+    const entered = inputs.map(i => i.value).join('');
+    if (entered.length < 6) {
+      document.getElementById('error-msg').textContent = 'faltan numeritos amor 💔';
+      return;
+    }
+    if (entered === PASSWORD) {
+      openLetter();
+    } else {
+      const row = document.getElementById('pin-row');
+      document.getElementById('error-msg').textContent = 'esta mallllll, como no vas a saber? 💔';
+      row.classList.remove('shake');
+      void row.offsetWidth;
+      row.classList.add('shake');
+      inputs.forEach(i => i.value = '');
+      inputs[0].focus();
+    }
+  }
+
+  function openLetter() {
+    document.getElementById('lock-screen').style.display = 'none';
+    const ls = document.getElementById('letter-screen');
+    ls.style.display = 'block';
+    document.getElementById('letter-date').textContent =
+      new Date().toLocaleDateString('es-ES', {year:'numeric', month:'long', day:'numeric'});
+    document.getElementById('letter-body').textContent = LETTER;
+    document.getElementById('letter-from').textContent = FROM;
+    burstHearts();
+  }
+
+  function burstHearts() {
+    const container = document.getElementById('heart-burst');
+    const chars  = ['♥','♡','💕','💗','💓','🌸'];
+    const colors = ['#C0394B','#E8607A','#F4A0B0','#8A2F52','#D4537E'];
+    for (let i = 0; i < 32; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'hb';
+        h.textContent = chars[Math.floor(Math.random()*chars.length)];
+        h.style.cssText = `
+          left: ${5 + Math.random()*90}%;
+          top:  ${50 + Math.random()*40}%;
+          color: ${colors[Math.floor(Math.random()*colors.length)]};
+          font-size: ${14 + Math.random()*20}px;
+          animation-duration: ${2 + Math.random()*1.5}s;
+        `;
+        container.appendChild(h);
+        setTimeout(() => h.remove(), 4000);
+      }, i * 80);
+    }
+  }
+</script>
+</body>
+</html>
